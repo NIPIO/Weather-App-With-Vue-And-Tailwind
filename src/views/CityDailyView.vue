@@ -1,7 +1,6 @@
 <template>
   <div class="max-w-screen-md w-full py-12">
     <div class="mx-8 text-white">
-      <h2 class="mb-4">Por día</h2>
       <div v-for="day in cityDataDaily" :key="day.dt" class="flex items-center">
         <p class="flex-1">
           {{dayUppercase(day.dt)}}

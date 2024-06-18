@@ -19,11 +19,13 @@
                  sm:max-w-xl">
               <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                 <div class="sm:flex sm:items-start">
-                  <ul>
-                    <li v-for="cities in citiesStorage">
+                  <ul class="w-full text-center">
+                    <li v-for="city in citiesStorage" @click="showCityWeather(city)">
                       <div class="flex py-6 px-1 my-3 bg-weather-secondary rounded-md shadow-md cursor-pointer">
                         <div class="flex flex-col flex-1 ">
-                          <h2 class="text-3xl text-white">{{ cities }}</h2>
+                          <p class="text-white">
+                            {{ city.name }}, {{ city.state ?? ' - ' }}, {{ city.country }}
+                          </p>
                         </div>
                       </div>
                     </li>
@@ -34,7 +36,7 @@
                 <button type="button"
                         @click="closeHistoryModal"
                         class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                        ref="cancelButtonRef">Entendido
+                        ref="cancelButtonRef">Cerrar
                 </button>
               </div>
             </DialogPanel>
@@ -68,7 +70,11 @@ export default defineComponent({
 
     historyCitiesStorage();
 
+    const showCityWeather = (c) => {
+      console.log(c)
+    }
     return {
+      showCityWeather,
       closeHistoryModal,
       historyCitiesStorage,
       citiesStorage

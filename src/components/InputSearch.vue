@@ -7,71 +7,104 @@
         class="absolute bg-weather-secondary text-white w-full shadow-md py-2 px-1 top-[66px]">
       <li v-for="city in citiesSearched" :key="city.code" class="py-2 px-3 cursor-pointer hover:bg-weather-primary"
           @click="searchCityWeather(city)">
-        {{ city.name }}, {{ city.state }}, {{ city.country }}
+        {{ city.name }}, {{ city.state ?? ' - ' }}, {{ city.country }}
       </li>
     </ul>
+
     <CityView v-if="cityData" :cityData="cityData"/>
   </div>
+  <Alert :msg="reportError.msg" v-if="reportError.status"/>
+
 </template>
 
-
-<script setup>
-
-import {ref} from "vue";
+<script>
+import {defineComponent, ref} from "vue";
 import axios from "axios";
 import CityView from "@/views/CityView.vue";
+import Alert from "@/components/Alert.vue";
 
-let cityToSearch = ref("");
-let citiesSearched = ref([]);
-let cityData = ref(null);
-let previewCity = ref(null);
+export default defineComponent({
+  name: "InputSearch",
+  components: {Alert, CityView},
+  setup() {
+    let cityToSearch = ref("");
+    let citiesSearched = ref([]);
+    let cityData = ref(null);
+    let reportError = ref({status: false, msg: "Ocurrió un error en la conexión"});
 
-const getCities = async () => {
-  if (cityToSearch.value !== "" && cityToSearch.value.length > 2) {
-    let result = await axios.get(`https://api.thecompaniesapi.com/v1/locations/cities?search=${cityToSearch.value}`)
-
-    citiesSearched = result.data.cities.map(city => {
-      return {
-        "name": city.name,
-        "state": city.state.name,
-        "country": city.country.name,
-        "lat": city.latitude,
-        "lon": city.longitude,
-        "code": city.code
+    const getCities = async () => {
+      try {
+        if (cityToSearch.value !== "" && cityToSearch.value.length > 2) {
+          let result = await axios.get(`https://api.thecompaniesapi.com/v1/locations/cities?search=${cityToSearch.value}`)
+          citiesSearched.value = result.data.cities.map(city => {
+            return {
+              "name": city.name,
+              "state": city.state?.name,
+              "country": city.country.name,
+              "lat": city.latitude,
+              "lon": city.longitude,
+              "code": city.code
+            }
+          })
+          reportError.value.status = false
+        } else {
+          citiesSearched.value = []
+        }
+      } catch (e) {
+        reportError.value.status = true
+        citiesSearched.value = []
       }
-    })
-  } else {
-    citiesSearched = []
-  }
-}
+
+    }
 
 
-const searchCityWeather = async (city) => {
-  //guardo en el localStorage la anterior (en caso de que exista).
-  saveInStorage(`${city.name}, ${city.state}, ${city.country}`)
+    const searchCityWeather = async (city) => {
+      cityToSearch.value = `${city.name}, ${city.state}, ${city.country}`
 
-  citiesSearched = []
-  let apiData = await axios.get(`https://api.openweathermap.org/data/3.0/onecall?lat=${city.lat}&lon=${city.lon}&exclude=minutely&appid=cf002f1aa0c77c078ea36fbd977194d1`)
+      try {
+        citiesSearched.value = []
+        let apiData = await axios.get(`https://api.openweathermap.org/data/3.0/onecall?lat=${city.lat}&lon=${city.lon}&exclude=minutely&appid=cf002f1aa0c77c078ea36fbd977194d1`)
 
-  cityData.value = {
-    "city": city,
-    "daily": apiData.data.daily,
-    "hourly": apiData.data.hourly,
-    "current": apiData.data.current,
-  }
+        cityData.value = {
+          "city": city,
+          "daily": apiData.data.daily,
+          "hourly": apiData.data.hourly,
+          "current": apiData.data.current,
+        }
 
-}
+        //guardo en el localStorage la anterior (en caso de que exista).
+        saveInStorage(city)
 
-const saveInStorage = (city) => {
-  let savedItemsArray = []
-  if (localStorage.getItem('savedItems')) {
-    savedItemsArray = JSON.parse(localStorage.getItem('savedItems'))
-    savedItemsArray.unshift(city)
-    localStorage.setItem('savedItems', JSON.stringify(savedItemsArray))
-  } else {
-    savedItemsArray.unshift(city)
-    localStorage.setItem('savedItems', JSON.stringify(savedItemsArray))
-  }
-}
+        reportError.value.status = false
 
+      } catch (e) {
+        reportError.value.status = true
+      }
+    }
+
+    const saveInStorage = (city) => {
+      let savedItemsArray = []
+      if (localStorage.getItem('savedItems')) {
+        savedItemsArray = JSON.parse(localStorage.getItem('savedItems'))
+        if (savedItemsArray[0] !== city) {
+          savedItemsArray.unshift(city)
+          localStorage.setItem('savedItems', JSON.stringify(savedItemsArray))
+        }
+      } else {
+        savedItemsArray.unshift(city)
+        localStorage.setItem('savedItems', JSON.stringify(savedItemsArray))
+      }
+    }
+
+    return {
+      searchCityWeather,
+      getCities,
+      cityToSearch,
+      citiesSearched,
+      cityData,
+      reportError
+    }
+  },
+
+})
 </script>
