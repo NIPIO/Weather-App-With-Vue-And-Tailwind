@@ -1,29 +1,16 @@
 # WeatherWithVue
 
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
+Esta aplicación fue desarrollada con fines educativos y ociosos. La información se obtiene de 2 APIs gratuitas:
 
 ```sh
-npm install
+https://api.thecompaniesapi.com
 ```
-
-### Compile and Hot-Reload for Development
-
 ```sh
-npm run dev
+https://api.openweathermap.org
 ```
 
-### Compile and Minify for Production
+Los datos obtenidos son manipulados unicamente con fines programables. La información es tal cual se registra en las APIs mencionadas.
 
-```sh
-npm run build
-```
+## Cómo se desarrolló?
+
+Utilicé Vite, NPM, Vue y Tailwind.
