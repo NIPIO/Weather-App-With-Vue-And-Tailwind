@@ -8,11 +8,9 @@
         </div>
       </RouterLink>
       <div class="flex gap-3 flex-1 justify-end">
-        <i class="fa-solid fa-history text-xl hover:text-weather-secondary duration-150 cursor-pointer" @click="toggleHistoryModal"></i>
         <i class="fa-solid fa-circle-info text-xl hover:text-weather-secondary duration-150 cursor-pointer" @click="toggleModal"></i>
       </div>
       <BaseModal :modalActive="modalActive" @cerrar-modal="toggleModal" />
-      <HistoryModal :historyModalActive="modalHistoryActive" @cerrar-modal-history="toggleHistoryModal" />
     </nav>
   </header>
 </template>
@@ -21,31 +19,22 @@
 <script>
 import BaseModal from "@/components/BaseModal.vue";
 import {defineComponent, ref} from "vue";
-import HistoryModal from "@/components/HistoryModal.vue";
 
 export default defineComponent({
   name: "SiteNavigation",
   components: {
-    HistoryModal,
     BaseModal,
   },
   setup() {
     let modalActive = ref(false)
-    let modalHistoryActive = ref(false)
 
     const toggleModal = () => {
       modalActive.value = !modalActive.value
     }
 
-    const toggleHistoryModal = () => {
-      modalHistoryActive.value = !modalHistoryActive.value
-    }
-
     return {
       modalActive,
-      modalHistoryActive,
       toggleModal,
-      toggleHistoryModal
     }
   },
 

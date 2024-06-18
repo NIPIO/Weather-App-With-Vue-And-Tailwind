@@ -19,13 +19,6 @@
         Nubosidad {{ cityDataCurrent.clouds }} %
       </p>
     </div>
-<!--    <div>-->
-<!--      <p class="capitalize"> {{ cityDataCurrent.sunset }}</p>-->
-<!--      <p class="capitalize"> {{ cityDataCurrent.sunrise }}</p>-->
-<!--      <p class="capitalize"> {{ cityDataCurrent.humidity }}</p>-->
-<!--      <p class="capitalize"> {{ cityDataCurrent.presure }}</p>-->
-<!--      <p class="capitalize"> {{ cityDataCurrent.weather }}</p>-->
-<!--    </div>-->
 
 
   </div>

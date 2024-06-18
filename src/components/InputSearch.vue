@@ -1,5 +1,8 @@
 <template>
   <div class="pt-4 mb-8 relative">
+    <div>
+      <HistoryCities v-if="getStorageCities()" :citiesStorage="getStorageCities()" @search-city="searchCityWeather"  />
+    </div>
     <input type="text" placeholder="Buscá por ciudad o provincia"
            class="py-2 px-1 w-full bg-transparent border-b focus:border-weather-secondary focus:outline-none focus:shadow-[0_1px_0_0_#FFFFFF]"
            v-model="cityToSearch" @input="getCities">
@@ -22,10 +25,11 @@ import {defineComponent, ref} from "vue";
 import axios from "axios";
 import CityView from "@/views/CityView.vue";
 import Alert from "@/components/Alert.vue";
+import HistoryCities from "@/components/HistoryCities.vue";
 
 export default defineComponent({
   name: "InputSearch",
-  components: {Alert, CityView},
+  components: {HistoryCities, Alert, CityView},
   setup() {
     let cityToSearch = ref("");
     let citiesSearched = ref([]);
@@ -57,7 +61,6 @@ export default defineComponent({
 
     }
 
-
     const searchCityWeather = async (city) => {
       cityToSearch.value = `${city.name}, ${city.state}, ${city.country}`
 
@@ -85,10 +88,13 @@ export default defineComponent({
     const saveInStorage = (city) => {
       let savedItemsArray = []
       if (localStorage.getItem('savedItems')) {
-        savedItemsArray = JSON.parse(localStorage.getItem('savedItems'))
-        if (savedItemsArray[0] !== city) {
-          savedItemsArray.unshift(city)
-          localStorage.setItem('savedItems', JSON.stringify(savedItemsArray))
+        savedItemsArray = getStorageCities()
+
+        if(!city.hasOwnProperty('history')) { //If it isn't a new search don't save it again in LS
+          if (savedItemsArray[0] !== city) {
+            savedItemsArray.unshift(city)
+            localStorage.setItem('savedItems', JSON.stringify(savedItemsArray))
+          }
         }
       } else {
         savedItemsArray.unshift(city)
@@ -96,9 +102,14 @@ export default defineComponent({
       }
     }
 
+    const getStorageCities = () => {
+      return JSON.parse(localStorage.getItem('savedItems'))
+    }
+
     return {
       searchCityWeather,
       getCities,
+      getStorageCities,
       cityToSearch,
       citiesSearched,
       cityData,
