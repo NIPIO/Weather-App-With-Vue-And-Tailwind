@@ -26,6 +26,7 @@ import axios from "axios";
 import CityView from "@/views/CityView.vue";
 import Alert from "@/components/Alert.vue";
 import HistoryCities from "@/components/HistoryCities.vue";
+import {API_KEY_OPEN_WEATHER} from "@/apis/API_KEYS.js";
 
 export default defineComponent({
   name: "InputSearch",
@@ -66,7 +67,7 @@ export default defineComponent({
 
       try {
         citiesSearched.value = []
-        let apiData = await axios.get(`https://api.openweathermap.org/data/3.0/onecall?lat=${city.lat}&lon=${city.lon}&exclude=minutely&appid=cf002f1aa0c77c078ea36fbd977194d1`)
+        let apiData = await axios.get(`https://api.openweathermap.org/data/3.0/onecall?lat=${city.lat}&lon=${city.lon}&exclude=minutely&appid=${API_KEY_OPEN_WEATHER}`)
 
         cityData.value = {
           "city": city,

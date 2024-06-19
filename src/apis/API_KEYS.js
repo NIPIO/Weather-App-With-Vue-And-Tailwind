@@ -1,0 +1,1 @@
+export const API_KEY_OPEN_WEATHER = "cf002f1aa0c77c078ea36fbd977194d1"
